@@ -7,22 +7,32 @@ moment().format();
 
 
 
-let timeChecker= async function(startTimeCorentShow){
-    let nowTime = await Date() ; 
-    //function that checks the time diffrents between start show and corent time and giving acsess to room
-    console.log(nowTime) 
+let timeChecker = function (startTimeCorentShow) {
+    let nowTime = moment(new Date());
+    let duration = moment.duration(nowTime.diff(startTimeCorentShow))
+    const minutes = duration.asMinutes();
+    if (minutes > 30) {
+        return false
+    } else {
+        return true
+    }
 }
 
 router.get('/:showID', async function (req, res) {
     let roomID = req.params.showID
     let showInfo = req.body
-    console.log(showInfo)
-    // timeChecker()
-    BroadcastRoom.findOne({roomID} , function(err , result){
-        if (err){
+    const timeAfterCheck = timeChecker(showInfo.startTime)
+    BroadcastRoom.findOne({ roomID: roomID }, function (err, result) {
+        console.log(result)
+        if (result && timeAfterCheck) {
+            res.send(result)
+            console.log("the show can start")
+        } else if (result && !timeAfterCheck) {
+            res.send(result)
+            console.log("you can open the show 30 min before the show start , come back later")
+        } else {
+            res.send("we dont have this room , please try diffrent id or try later , for support go to matan")
             console.log("we dont have this room , please try diffrent id or try later , for support go to matan")
-        }else if(result){
-            ("good , now put the time checker")
         }
     })
 })
@@ -39,8 +49,8 @@ router.post('/:showID', async function (req, res) {
         roomID: roomID,
         participants: [],
         creator: showInfo.creator,
-        startTime:startTime,
-        endTime:endTime,
+        startTime: startTime,
+        endTime: endTime,
         isLive: false,
         mainVideo: null
     })
@@ -57,23 +67,23 @@ router.put('/:showID', async function (req, res) {
     let { isBook } = req.body
     if (isBook) {
         BroadcastRoom.updateOne({ roomID: showID }, { $push: { participants: { userID, VideoStream: null } } })
-        .then(function (err, bookShow) {
-            if (err) res.send(err)
-            else res.send(bookShow)
-        })
+            .then(function (err, bookShow) {
+                if (err) res.send(err)
+                else res.send(bookShow)
+            })
     }
     else {
         BroadcastRoom.updateOne({ roomID: showID }, { $pull: { participants: { userID, VideoStream: null } } })
-        .then(function (err, unbookShow) {
-            if (err) res.send(err)
-            else res.send(unbookShow)
-        })
+            .then(function (err, unbookShow) {
+                if (err) res.send(err)
+                else res.send(unbookShow)
+            })
     }
 })
 
 router.delete('/:showID', async function (req, res) {
     const roomID = req.params.showID
-    BroadcastRoom.findOneAndDelete({roomID}).then(function (err, deleteShow) {
+    BroadcastRoom.findOneAndDelete({ roomID }).then(function (err, deleteShow) {
         if (err) res.send(err)
         else res.send(deleteShow)
     })
