@@ -1,5 +1,5 @@
 const express = require('express')
-const User = require('./User')
+const ChatRoom = require('../Schema/ChatRoom')
 const router = express.Router()
 
 

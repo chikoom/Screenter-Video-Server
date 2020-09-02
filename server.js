@@ -2,20 +2,17 @@ const express = require('express')
 const mongoose = require('mongoose')
 const path = require('path')
 const app = express()
-// const api = require('./server/api')
-const Test = require('./sc')
+const broadCast = require('./Routes/broadCast')
+const chatRoom = require('./Routes/chatRoom')
+const message = require('./Routes/message')
+const videoStream = require('./Routes/videoStream')
+
 require('dotenv').config()
 
 const { DB_URL } = process.env
 console.log(DB_URL)
-mongoose.connect(DB_URL, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  useFindAndModify: false,
-})
-const obj= {name:'aviad'}
-const test = new Test(obj)
-test.save()
+mongoose.connect(DB_URL, {useNewUrlParser: true,useUnifiedTopology: true, useFindAndModify: false})
+
 
 app.use(express.static(path.join(__dirname, 'dist')))
 app.use(express.static(path.join(__dirname, 'node_modules')))
@@ -28,5 +25,9 @@ app.use(function (req, res, next) {
   next()
 })
 
-// app.use('/', api)
+app.use('/broadCast', broadCast)
+// app.use('/chatRoom', chatRoom)
+// app.use('/message', message)
+// app.use('/videoStream', videoStream)
+
 app.listen(8080, () => console.log("server up and running on port 8080"))
