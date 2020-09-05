@@ -49,29 +49,29 @@ router.get('/:showID', async function (req, res) {
     } else {
       const participant = checkParticipant(result, parseInt(userID))
       console.log(participant)
-    }
 
-    if (result && timeAfterCheck) {
-      res.send(result)
-      console.log('the show can start')
+      if (result && timeAfterCheck) {
+        res.send(result)
+        console.log('the show can start')
 
-      startShow(roomID)
-    } else if (result && !timeAfterCheck) {
-      res.send({
-        error:
-          'we dont have this room , please try diffrent id or try later , for support go to matan',
-      })
-      console.log(
-        'you can open the show 30 min before the show start , come back later'
-      )
-    } else {
-      res.status(404).send({
-        error:
-          'we dont have this room , please try diffrent id or try later , for support go to matan',
-      })
-      console.log(
-        'we dont have this room , please try diffrent id or try later , for support go to matan'
-      )
+        startShow(roomID)
+      } else if (result && !timeAfterCheck) {
+        res.send({
+          error:
+            'we dont have this room , please try diffrent id or try later , for support go to matan',
+        })
+        console.log(
+          'you can open the show 30 min before the show start , come back later'
+        )
+      } else {
+        res.status(404).send({
+          error:
+            'we dont have this room , please try diffrent id or try later , for support go to matan',
+        })
+        console.log(
+          'we dont have this room , please try diffrent id or try later , for support go to matan'
+        )
+      }
     }
   })
 })

@@ -14,8 +14,10 @@ const broadCast = require('./Routes/broadCast')
 const chatRoom = require('./Routes/chatRoom')
 const message = require('./Routes/message')
 const videoStream = require('./Routes/videoStream')
+const cors = require('cors')
 
 require('dotenv').config()
+app.use(cors())
 
 const { DB_URL } = process.env
 console.log(DB_URL)
@@ -31,6 +33,7 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 
 app.use('/peerjs', peerServer)
+
 app.get('/broadcast-room/:room', (req, res) => {
   //res.render('room', { roomID: req.params.room })
   res.send('OK')
@@ -50,13 +53,17 @@ io.on('connection', socket => {
   console.log('Connection recieved')
   socket.emit('FromAPI', 'HELLO!')
 
-  socket.on('join-room', (roomID, userID) => {
+  socket.on('join-room', (roomID, peerUserID, currentUserID, streamID) => {
     console.log('joined room!')
     console.log('Socket room ID', roomID)
-    console.log('PEER user ID', userID)
+    console.log('PEER user ID', peerUserID)
+    console.log('DB USER ID', currentUserID)
+    console.log('USER STREAM ID', streamID)
 
     socket.join(roomID)
-    socket.to(roomID).broadcast.emit('user-conncted', userID)
+    socket
+      .to(roomID)
+      .broadcast.emit('user-conncted', peerUserID, currentUserID, streamID)
 
     socket.on('message', messageObj => {
       console.log(messageObj.user)
@@ -71,4 +78,4 @@ app.use('/broadCast', broadCast)
 // app.use('/message', message)
 // app.use('/videoStream', videoStream)
 
-server.listen(8080, () => console.log('server up and running on port 8080'))
+server.listen(8181, () => console.log('server up and running on port 8181'))
