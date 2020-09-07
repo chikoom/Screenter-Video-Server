@@ -37,7 +37,7 @@ router.get('/:showID', async function (req, res) {
   const userID = req.query.ID
   let roomID = req.params.showID
   let showInfo = req.body
-  const timeAfterCheck = timeChecker(showInfo.startTime)
+  // const timeAfterCheck = timeChecker(showInfo.startTime)
   BroadcastRoom.findOne({ roomID: roomID }, function (err, result) {
     // console.log(result)
 
@@ -50,7 +50,9 @@ router.get('/:showID', async function (req, res) {
       const participant = checkParticipant(result, parseInt(userID))
       console.log(participant)
 
-      if (result && timeAfterCheck) {
+      //  if (result && timeAfterCheck)
+
+      if (result) {
         res.send(result)
         console.log('the show can start')
 
