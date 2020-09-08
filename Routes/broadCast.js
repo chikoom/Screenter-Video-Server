@@ -34,7 +34,7 @@ const startShow = roomID => {}
 
 router.get('/:showID', async function (req, res) {
   // console.log(req.query)
-  const userID = req.query.ID
+  // const userID = req.query.ID
   let roomID = req.params.showID
   let showInfo = req.body
   // const timeAfterCheck = timeChecker(showInfo.startTime)
@@ -47,16 +47,17 @@ router.get('/:showID', async function (req, res) {
         roomID: roomID,
       })
     } else {
-      const participant = checkParticipant(result, parseInt(userID))
-      console.log(participant)
+      // const participant = checkParticipant(result, parseInt(userID))
+      // console.log(participant)
 
       //  if (result && timeAfterCheck)
 
       if (result) {
         res.send(result)
-        console.log('the show can start')
 
-        startShow(roomID)
+        // console.log('the show can start')
+
+        // startShow(roomID)
       } else if (result && !timeAfterCheck) {
         res.send({
           error:
