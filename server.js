@@ -5,6 +5,8 @@ const app = express()
 
 const server = require('http').Server(app)
 const io = require('socket.io')(server)
+// const io = require('socket.io')()
+// io.listen(4000)
 const { ExpressPeerServer } = require('peer')
 const peerServer = ExpressPeerServer(server, {
   debug: true,
@@ -52,6 +54,9 @@ app.use(function (req, res, next) {
 io.on('connection', socket => {
   console.log('Connection recieved')
   socket.emit('FromAPI', 'HELLO!')
+  socket.on('test', messageObj => {
+    console.log(messageObj)
+  })
 
   socket.on('join-room', (roomID, peerUserID, currentUserID, streamID) => {
     console.log('joined room!')
