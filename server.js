@@ -5,8 +5,6 @@ const app = express()
 
 const server = require('http').Server(app)
 const io = require('socket.io')(server)
-// const io = require('socket.io')()
-// io.listen(4000)
 const { ExpressPeerServer } = require('peer')
 const peerServer = ExpressPeerServer(server, {
   debug: true,
@@ -54,8 +52,16 @@ app.use(function (req, res, next) {
 io.on('connection', socket => {
   console.log('Connection recieved')
   socket.emit('FromAPI', 'HELLO!')
-  socket.on('test', messageObj => {
-    console.log(messageObj)
+  // socket.on('message', messageObj => {
+  //   console.log('USER CREATED MSSGSG')
+  // })
+
+  let localRoomID = ''
+
+  socket.on('message', messageObj => {
+    console.log(messageObj.user)
+    console.log(messageObj.msg)
+    io.emit('user-message', messageObj)
   })
 
   socket.on('join-room', (roomID, peerUserID, currentUserID, streamID) => {
@@ -64,17 +70,11 @@ io.on('connection', socket => {
     console.log('PEER user ID', peerUserID)
     console.log('DB USER ID', currentUserID)
     console.log('USER STREAM ID', streamID)
-
+    localRoomID = roomID
     socket.join(roomID)
     socket
       .to(roomID)
       .broadcast.emit('user-conncted', peerUserID, currentUserID, streamID)
-
-    socket.on('message', messageObj => {
-      console.log(messageObj.user)
-      console.log(messageObj.msg)
-      io.in(roomID).emit('user-message', messageObj)
-    })
   })
 })
 
