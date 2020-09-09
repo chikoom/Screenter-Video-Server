@@ -86,5 +86,5 @@ app.use('/broadCast', broadCast)
 // app.use('/chatRoom', chatRoom)
 // app.use('/message', message)
 // app.use('/videoStream', videoStream)
-
-server.listen(8181, () => console.log('server up and running on port 8181'))
+const PORT = process.env.PORT || 8181
+server.listen(PORT, () => console.log('server up and running on port 8181'))
