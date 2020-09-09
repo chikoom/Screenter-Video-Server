@@ -87,4 +87,4 @@ app.use('/broadCast', broadCast)
 // app.use('/message', message)
 // app.use('/videoStream', videoStream)
 const PORT = process.env.PORT || 8181
-server.listen(PORT, () => console.log('server up and running on port 8181'))
+server.listen(PORT, () => console.log(`server up and running on port ${PORT}`))
