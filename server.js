@@ -21,11 +21,18 @@ app.use(cors())
 
 const { DB_URL } = process.env
 console.log(DB_URL)
-mongoose.connect(DB_URL, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  useFindAndModify: false,
-})
+mongoose.connect(
+  DB_URL,
+  {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useFindAndModify: false,
+  },
+  err => {
+    console.log('Connected to DB')
+    console.log(err)
+  }
+)
 
 app.use(express.static(path.join(__dirname, 'dist')))
 app.use(express.static(path.join(__dirname, 'node_modules')))
