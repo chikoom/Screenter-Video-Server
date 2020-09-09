@@ -1,13 +1,12 @@
-const express = require('express')
 const mongoose = require('mongoose')
 const path = require('path')
+const express = require('express')
 const app = express()
 var AWS = require('aws-sdk')
 
 const server = require('http').Server(app)
 const io = require('socket.io')(server)
-// const io = require('socket.io')()
-// io.listen(4000)
+
 const { ExpressPeerServer } = require('peer')
 const peerServer = ExpressPeerServer(server, {
   debug: true,
@@ -38,11 +37,18 @@ AWS.config.update({
 
 const { DB_URL } = process.env
 console.log(DB_URL)
-mongoose.connect(DB_URL, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  useFindAndModify: false,
-})
+mongoose.connect(
+  DB_URL,
+  {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useFindAndModify: false,
+  },
+  err => {
+    console.log('Connected to DB')
+    console.log(err)
+  }
+)
 
 app.use(express.static(path.join(__dirname, 'dist')))
 app.use(express.static(path.join(__dirname, 'node_modules')))
@@ -82,6 +88,7 @@ app.use(function (req, res, next) {
     console.log('USER STREAM ID', streamID)
     
     socket.join(roomID)
+
     socket
     .to(roomID)
     .broadcast.emit('user-conncted', peerUserID, currentUserID, streamID)
@@ -98,6 +105,7 @@ app.use('/broadCast', broadCast)
 // app.use('/chatRoom', chatRoom)
 // app.use('/message', message)
 // app.use('/videoStream', videoStream)
+const PORT = process.env.PORT || 8181
 
 app.post('/api/notification', (req, res) => {
 const { phone, showTitle, time } = req.body
@@ -141,4 +149,11 @@ const { phone, showTitle, time } = req.body
   //   });
 });
 
-server.listen(8181, () => console.log('server up and running on port 8181'))
+server.listen(PORT, () => console.log('server up and running on port 8181'))
+const logJoin = (roomID, peerUserID, currentUserID, streamID) => {
+  console.log('joined room!')
+  console.log('Socket room ID', roomID)
+  console.log('PEER user ID', peerUserID)
+  console.log('DB USER ID', currentUserID)
+  console.log('USER STREAM ID', streamID)
+}
