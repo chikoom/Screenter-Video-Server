@@ -1,10 +1,10 @@
-const express = require('express')
 const mongoose = require('mongoose')
 const path = require('path')
+const express = require('express')
 const app = express()
-
 const server = require('http').Server(app)
 const io = require('socket.io')(server)
+
 const { ExpressPeerServer } = require('peer')
 const peerServer = ExpressPeerServer(server, {
   debug: true,
@@ -50,24 +50,21 @@ app.get('/check', (req, res) => {
   res.send('OK')
 })
 
-app.use(function (req, res, next) {
-  res.header('Access-Control-Allow-Origin', '*')
-  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
-  res.header(
-    'Access-Control-Allow-Headers',
-    'Content-Type, Authorization, Content-Length, X-Requested-With'
-  )
-  next()
-})
+// app.use(function (req, res, next) {
+//   res.header('Access-Control-Allow-Origin', '*')
+//   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+//   res.header(
+//     'Access-Control-Allow-Headers',
+//     'Content-Type, Authorization, Content-Length, X-Requested-With'
+//   )
+//   next()
+// })
+
+const rooms = {}
 
 io.on('connection', socket => {
   console.log('Connection recieved')
   socket.emit('FromAPI', 'HELLO!')
-  // socket.on('message', messageObj => {
-  //   console.log('USER CREATED MSSGSG')
-  // })
-
-  let localRoomID = ''
 
   socket.on('message', messageObj => {
     console.log(messageObj.user)
@@ -76,13 +73,13 @@ io.on('connection', socket => {
   })
 
   socket.on('join-room', (roomID, peerUserID, currentUserID, streamID) => {
-    console.log('joined room!')
-    console.log('Socket room ID', roomID)
-    console.log('PEER user ID', peerUserID)
-    console.log('DB USER ID', currentUserID)
-    console.log('USER STREAM ID', streamID)
-    localRoomID = roomID
+    logJoin(roomID, peerUserID, currentUserID, streamID)
+
+    if (rooms[roomID]) rooms[roomID].push(socket.id)
+    else rooms[roomID] = [socket.id]
+
     socket.join(roomID)
+
     socket
       .to(roomID)
       .broadcast.emit('user-conncted', peerUserID, currentUserID, streamID)
@@ -95,3 +92,11 @@ app.use('/broadCast', broadCast)
 // app.use('/videoStream', videoStream)
 const PORT = process.env.PORT || 8181
 server.listen(PORT, () => console.log(`server up and running on port ${PORT}`))
+
+const logJoin = (roomID, peerUserID, currentUserID, streamID) => {
+  console.log('joined room!')
+  console.log('Socket room ID', roomID)
+  console.log('PEER user ID', peerUserID)
+  console.log('DB USER ID', currentUserID)
+  console.log('USER STREAM ID', streamID)
+}
