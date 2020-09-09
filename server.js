@@ -50,15 +50,15 @@ app.get('/check', (req, res) => {
   res.send('OK')
 })
 
-// app.use(function (req, res, next) {
-//   res.header('Access-Control-Allow-Origin', '*')
-//   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
-//   res.header(
-//     'Access-Control-Allow-Headers',
-//     'Content-Type, Authorization, Content-Length, X-Requested-With'
-//   )
-//   next()
-// })
+app.use(function (req, res, next) {
+  res.header('Access-Control-Allow-Origin', '*')
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+  res.header(
+    'Access-Control-Allow-Headers',
+    'Content-Type, Authorization, Content-Length, X-Requested-With'
+  )
+  next()
+})
 
 const rooms = {}
 
@@ -83,6 +83,11 @@ io.on('connection', socket => {
     socket
       .to(roomID)
       .broadcast.emit('user-conncted', peerUserID, currentUserID, streamID)
+  })
+
+  socket.on('end-show', () => {
+    console.log('CREATOR SAY END SHOW SAY END SHOW')
+    io.emit('end-show', 'SERVER SAY END SHOW')
   })
 })
 
