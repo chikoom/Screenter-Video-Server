@@ -33,13 +33,14 @@ const checkParticipant = (room, userID) => {
 const startShow = roomID => {}
 
 router.get('/:showID', async function (req, res) {
-  // console.log(req.query)
+  console.log(req.query)
   // const userID = req.query.ID
   let roomID = req.params.showID
   let showInfo = req.body
   // const timeAfterCheck = timeChecker(showInfo.startTime)
   BroadcastRoom.findOne({ roomID: roomID }, function (err, result) {
-    // console.log(result)
+    console.log(result)
+    console.log(err)
 
     if (!result) {
       res.status(404).send({
