@@ -165,8 +165,6 @@ const { phone, showTitle, time } = req.body
   //     res.send(JSON.stringify({ success: false }));
   //   });
 });
-
-server.listen(PORT, () => console.log('server up and running on port 8181'))
 const logJoin = (roomID, peerUserID, currentUserID, streamID) => {
   console.log('joined room!')
   console.log('Socket room ID', roomID)
@@ -174,3 +172,6 @@ const logJoin = (roomID, peerUserID, currentUserID, streamID) => {
   console.log('DB USER ID', currentUserID)
   console.log('USER STREAM ID', streamID)
 }
+
+
+server.listen(PORT, () => console.log('server up and running on port 8181'))
