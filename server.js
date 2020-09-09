@@ -26,10 +26,10 @@ const { URL_KEY, URL_SEC } = process.env
 
 // Set region
 AWS.config.update({
-    accessKeyId: URL_KEY,
-    secretAccessKey: URL_SEC,
-    region: "us-east-1",
-});
+  accessKeyId: URL_KEY,
+  secretAccessKey: URL_SEC,
+  region: 'us-east-1',
+})
 // const client = require('twilio')(
 //   process.env.TWILIO_ACCOUNT_SID,
 //   process.env.TWILIO_AUTH_TOKEN
@@ -55,7 +55,6 @@ app.use(express.static(path.join(__dirname, 'node_modules')))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 
-
 app.use('/peerjs', peerServer)
 
 app.get('/broadcast-room/:room', (req, res) => {
@@ -78,33 +77,29 @@ const rooms = {}
 io.on('connection', socket => {
   console.log('Connection recieved')
   socket.emit('FromAPI', 'HELLO!')
+  socket.on('test', messageObj => {
+    console.log(messageObj)
+  })
 
   socket.on('message', messageObj => {
     console.log(messageObj.user)
     console.log(messageObj.msg)
     io.emit('user-message', messageObj)
   })
-  
-  io.on('connection', socket => {
-    console.log('Connection recieved')
-    socket.emit('FromAPI', 'HELLO!')
-    socket.on('test', messageObj => {
-      console.log(messageObj)
-    })
-    
-    socket.on('join-room', (roomID, peerUserID, currentUserID, streamID) => {
-      console.log('joined room!')
-      console.log('Socket room ID', roomID)
-      console.log('PEER user ID', peerUserID)
-      console.log('DB USER ID', currentUserID)
+
+  socket.on('join-room', (roomID, peerUserID, currentUserID, streamID) => {
+    console.log('joined room!')
+    console.log('Socket room ID', roomID)
+    console.log('PEER user ID', peerUserID)
+    console.log('DB USER ID', currentUserID)
     console.log('USER STREAM ID', streamID)
-    
+
     socket.join(roomID)
 
     socket
-    .to(roomID)
-    .broadcast.emit('user-conncted', peerUserID, currentUserID, streamID)
-    
+      .to(roomID)
+      .broadcast.emit('user-conncted', peerUserID, currentUserID, streamID)
+
     socket.on('message', messageObj => {
       console.log(messageObj.user)
       console.log(messageObj.msg)
@@ -125,31 +120,33 @@ app.use('/broadCast', broadCast)
 const PORT = process.env.PORT || 8181
 
 app.post('/api/notification', (req, res) => {
-const { phone, showTitle, time } = req.body
-      // const numbers = ['+972523641163','+972528228640','+972549093350']
-      // for(let number of numbers){
-      var params = {
-          Message: `${showTitle} Live Start at ${time} => www.screenters.com CrAZyAwSoMe LIVE STREAMING`,
-          PhoneNumber: phone,
-          MessageAttributes: {
-              "AWS.SNS.SMS.SenderID": {
-                  DataType: "String",
-                  StringValue: "Screenters"
-              }
-          }
-      };
-      // Create promise and SNS service object
-      var publishTextPromise = new AWS.SNS({ apiVersion: '2010-03-31' }).publish(params).promise();
-      publishTextPromise.then(r=>console.log(r))
-  
-      // Handle promise's fulfilled/rejected states
-      publishTextPromise.then(
-          function (data) {
-              console.log("MessageID:" + data.MessageId + " has sent successfully");
-          }).catch(
-              function (err) {
-                  console.error(err, err.stack);
-              });
+  const { phone, showTitle, time } = req.body
+  // const numbers = ['+972523641163','+972528228640','+972549093350']
+  // for(let number of numbers){
+  var params = {
+    Message: `${showTitle} Live Start at ${time} => www.screenters.com CrAZyAwSoMe LIVE STREAMING`,
+    PhoneNumber: phone,
+    MessageAttributes: {
+      'AWS.SNS.SMS.SenderID': {
+        DataType: 'String',
+        StringValue: 'Screenters',
+      },
+    },
+  }
+  // Create promise and SNS service object
+  var publishTextPromise = new AWS.SNS({ apiVersion: '2010-03-31' })
+    .publish(params)
+    .promise()
+  publishTextPromise.then(r => console.log(r))
+
+  // Handle promise's fulfilled/rejected states
+  publishTextPromise
+    .then(function (data) {
+      console.log('MessageID:' + data.MessageId + ' has sent successfully')
+    })
+    .catch(function (err) {
+      console.error(err, err.stack)
+    })
   // res.header('Content-Type', 'application/json');
   // client.messages
   //   .create({
@@ -164,7 +161,8 @@ const { phone, showTitle, time } = req.body
   //     console.log(err);
   //     res.send(JSON.stringify({ success: false }));
   //   });
-});
+})
+
 const logJoin = (roomID, peerUserID, currentUserID, streamID) => {
   console.log('joined room!')
   console.log('Socket room ID', roomID)
@@ -172,6 +170,5 @@ const logJoin = (roomID, peerUserID, currentUserID, streamID) => {
   console.log('DB USER ID', currentUserID)
   console.log('USER STREAM ID', streamID)
 }
-
 
 server.listen(PORT, () => console.log('server up and running on port 8181'))
