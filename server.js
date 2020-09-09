@@ -38,6 +38,10 @@ app.get('/broadcast-room/:room', (req, res) => {
   //res.render('room', { roomID: req.params.room })
   res.send('OK')
 })
+app.get('/check', (req, res) => {
+  //res.render('room', { roomID: req.params.room })
+  res.send('OK')
+})
 
 app.use(function (req, res, next) {
   res.header('Access-Control-Allow-Origin', '*')
