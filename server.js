@@ -105,13 +105,12 @@ app.use('/broadCast', broadCast)
 // app.use('/chatRoom', chatRoom)
 // app.use('/message', message)
 // app.use('/videoStream', videoStream)
-const PORT = process.env.PORT || 8181
 
 app.post('/api/notification', (req, res) => {
-const { phone, showTitle, time } = req.body
+  const { phone, showTitle, time } = req.body
       // const numbers = ['+972523641163','+972528228640','+972549093350']
       // for(let number of numbers){
-      var params = {
+        var params = {
           Message: `${showTitle} Live Start at ${time} => www.screenters.com CrAZyAwSoMe LIVE STREAMING`,
           PhoneNumber: phone,
           MessageAttributes: {
@@ -120,36 +119,38 @@ const { phone, showTitle, time } = req.body
                   StringValue: "Screenters"
               }
           }
-      };
+        };
       // Create promise and SNS service object
       var publishTextPromise = new AWS.SNS({ apiVersion: '2010-03-31' }).publish(params).promise();
       publishTextPromise.then(r=>console.log(r))
-  
+      
       // Handle promise's fulfilled/rejected states
       publishTextPromise.then(
-          function (data) {
-              console.log("MessageID:" + data.MessageId + " has sent successfully");
-          }).catch(
-              function (err) {
-                  console.error(err, err.stack);
-              });
-  // res.header('Content-Type', 'application/json');
-  // client.messages
-  //   .create({
-  //     from: process.env.TWILIO_PHONE_NUMBER,
-  //     to: req.body.to,
-  //     body: req.body.body
-  //   })
-  //   .then(() => {
-  //     res.send(JSON.stringify({ success: true }));
-  //   })
-  //   .catch(err => {
-  //     console.log(err);
-  //     res.send(JSON.stringify({ success: false }));
-  //   });
+        function (data) {
+          console.log("MessageID:" + data.MessageId + " has sent successfully");
+        }).catch(
+          function (err) {
+            console.error(err, err.stack);
+          });
+          // res.header('Content-Type', 'application/json');
+          // client.messages
+          //   .create({
+            //     from: process.env.TWILIO_PHONE_NUMBER,
+            //     to: req.body.to,
+            //     body: req.body.body
+            //   })
+            //   .then(() => {
+              //     res.send(JSON.stringify({ success: true }));
+              //   })
+              //   .catch(err => {
+                //     console.log(err);
+                //     res.send(JSON.stringify({ success: false }));
+                //   });
+                res.end()
 });
 
-server.listen(PORT, () => console.log('server up and running on port 8181'))
+const PORT = process.env.PORT || 8181
+server.listen(PORT, () => console.log(`server up and running on port ${PORT}`))
 const logJoin = (roomID, peerUserID, currentUserID, streamID) => {
   console.log('joined room!')
   console.log('Socket room ID', roomID)
