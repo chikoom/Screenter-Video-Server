@@ -171,4 +171,3 @@ const logJoin = (roomID, peerUserID, currentUserID, streamID) => {
   console.log('USER STREAM ID', streamID)
 }
 
-server.listen(PORT, () => console.log('server up and running on port 8181'))
